@@ -1,12 +1,16 @@
 package com.tranhuy105.epubtranslator.controllers;
 
 import com.tranhuy105.epubtranslator.EpubReaderApp;
+import com.tranhuy105.epubtranslator.models.Language;
 import com.tranhuy105.epubtranslator.services.ApiClientService;
 import com.tranhuy105.epubtranslator.models.ApiClientType;
 import com.tranhuy105.epubtranslator.models.TranslationTask;
 import com.tranhuy105.epubtranslator.services.EpubToHtmlConverter;
 import com.tranhuy105.epubtranslator.services.FileManager;
+import com.tranhuy105.epubtranslator.services.TranslationTaskManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
@@ -28,10 +32,10 @@ public class EpubViewerController {
     private TextField pageInput;
     private WebEngine webEngine;
     private boolean isDarkMode = true;
-    private FileManager fileManager;
+    private ChangeListener<Worker.State> loadStateListener;
+
 
     public void initialize() {
-        fileManager = FileManager.getInstance();
         webEngine = webView.getEngine();
 
         // idk why i can't navigate by a tag #id in javafx when i click on it, so i have to resolve to this.
@@ -42,19 +46,20 @@ public class EpubViewerController {
             }
         });
 
-        webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+        loadStateListener = (obs, oldState, newState) -> {
             if (newState == javafx.concurrent.Worker.State.SUCCEEDED) {
                 JSObject window = (JSObject) webEngine.executeScript("window");
                 window.setMember("app", this);
                 webEngine.executeScript("initialize();");
             }
-        });
+        };
+        webEngine.getLoadWorker().stateProperty().addListener(loadStateListener);
     }
 
     public void loadEpub(String filePath) {
         try {
-            Book book = fileManager.readEpubFile(filePath);
-            String epubCss = fileManager.extractCssFromBook(book);
+            Book book = FileManager.getInstance().readEpubFile(filePath);
+            String epubCss = FileManager.getInstance().extractCssFromBook(book);
             String customCss = loadCss();
             String htmlContent = EpubToHtmlConverter.convertEpubToHtml(book);
             String completeHtml = buildCompleteHtml(customCss, epubCss, htmlContent);
@@ -68,6 +73,7 @@ public class EpubViewerController {
     @FXML
     protected void navigateToHome() {
         try {
+            clearWebView();
             EpubReaderApp.navigateToHome();
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +103,9 @@ public class EpubViewerController {
     }
 
     private String loadCss() throws IOException {
-        return isDarkMode ? fileManager.loadCssFromFile("dark-theme.css") : fileManager.loadCssFromFile("light-theme.css");
+        return isDarkMode ?
+                FileManager.getInstance().loadCssFromFile("dark-theme.css") :
+                FileManager.getInstance().loadCssFromFile("light-theme.css");
     }
 
     private void injectNewCss() throws IOException {
@@ -158,7 +166,12 @@ public class EpubViewerController {
 
     public void getTranslationAsync(String originalText, String elementId) {
         System.out.println("Received Translate Request: " + originalText + " ID: " + elementId);
-        TranslationTask task = new TranslationTask(originalText, ApiClientService.getClient(ApiClientType.MY_MEMORY));
+        TranslationTask task = new TranslationTask(
+                originalText,
+                Language.JAPANESE,
+                Language.ENGLISH,
+                ApiClientService.getClient(ApiClientType.MY_MEMORY)
+        );
 
         task.setOnSucceeded(e -> {
             String translatedText = task.getValue();
@@ -170,10 +183,22 @@ public class EpubViewerController {
             Platform.runLater(() -> sendTranslationErrorToView(elementId, e.getSource().getException().getMessage()));
         });
 
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        TranslationTaskManager.getExecutorService().submit(task);
     }
+
+    public void clearWebView() {
+        if (webView != null) {
+            // Remove listeners and clear resources
+            if (loadStateListener != null) {
+                webEngine.getLoadWorker().stateProperty().removeListener(loadStateListener);
+            }
+            webEngine.setOnAlert(null);
+            webEngine = null; // Clear the reference
+            webView = null; // Clear the reference
+            System.gc(); // Request garbage collection
+        }
+    }
+
 
     private void inspectResources(Collection<Resource> resources){
         for (Resource resource : resources) {

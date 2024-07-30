@@ -1,6 +1,7 @@
 package com.tranhuy105.epubtranslator;
 
 import com.tranhuy105.epubtranslator.controllers.EpubViewerController;
+import com.tranhuy105.epubtranslator.services.TranslationTaskManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -39,5 +40,6 @@ public class EpubReaderApp extends Application {
 
     public static void main(String[] args) {
         launch();
+        TranslationTaskManager.getExecutorService().shutdown();
     }
 }

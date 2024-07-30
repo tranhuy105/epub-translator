@@ -42,6 +42,8 @@ public class EpubToHtmlConverter {
             htmlContent = embedBase64Images(htmlContent, base64Images);
             htmlContentBuilder.append(htmlContent);
         }
+
+        base64Images.clear();
         return htmlContentBuilder.toString();
     }
 

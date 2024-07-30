@@ -33,7 +33,7 @@ public class ApiClientService {
         if (conn.getResponseCode() == 200) {
             return parser.apply(content.toString());
         } else {
-            throw new RuntimeException("Failed to get response");
+            throw new RuntimeException("Api call to translation service response with an error status. Please try again later");
         }
     }
 }
