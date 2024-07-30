@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.web.WebView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.TextField?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tranhuy105.epubtranslator.controllers.EpubViewerController">
+    <top>
+        <HBox spacing="10" style="-fx-padding: 5; -fx-background-color: #333;" BorderPane.alignment="CENTER">
+            <Button text="Back to Home" onAction="#navigateToHome" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+            <Button text="Toggle Theme" onAction="#toggleTheme" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+            <TextField fx:id="pageInput" promptText="Enter page number" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+            <Button text="Go to Page" onAction="#goToPage" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+        </HBox>
+    </top>
+    <center>
+        <WebView fx:id="webView"/>
+    </center>
+</BorderPane>
