@@ -1,6 +1,8 @@
 package com.tranhuy105.epubtranslator.controllers;
 
 import com.tranhuy105.epubtranslator.EpubReaderApp;
+import com.tranhuy105.epubtranslator.services.ApiClientService;
+import com.tranhuy105.epubtranslator.models.ApiClientType;
 import com.tranhuy105.epubtranslator.models.TranslationTask;
 import com.tranhuy105.epubtranslator.services.EpubToHtmlConverter;
 import com.tranhuy105.epubtranslator.services.FileManager;
@@ -141,9 +143,22 @@ public class EpubViewerController {
         }
     }
 
+    private void sendTranslationErrorToView(String elementId, String message) {
+        try {
+            String escapedElementId = elementId.replace("'", "\\'");
+            String escapedMessage = message.replace("'", "\\'");
+
+            String script = String.format("handleTranslationError('%s', '%s');",
+                    escapedElementId, escapedMessage);
+            webEngine.executeScript(script);
+        } catch (Exception ex) {
+            System.err.println("Callback invocation failed: " + ex.getMessage());
+        }
+    }
+
     public void getTranslationAsync(String originalText, String elementId) {
         System.out.println("Received Translate Request: " + originalText + " ID: " + elementId);
-        TranslationTask task = new TranslationTask(originalText);
+        TranslationTask task = new TranslationTask(originalText, ApiClientService.getClient(ApiClientType.MY_MEMORY));
 
         task.setOnSucceeded(e -> {
             String translatedText = task.getValue();
@@ -152,14 +167,7 @@ public class EpubViewerController {
 
         task.setOnFailed(e -> {
             System.err.println("Translation failed: " + e.getSource().getException());
-            Platform.runLater(() -> {
-                try {
-                    String script = "handleTranslationError();";
-                    webEngine.executeScript(script);
-                } catch (Exception ex) {
-                    System.err.println("Callback invocation failed: " + ex.getMessage());
-                }
-            });
+            Platform.runLater(() -> sendTranslationErrorToView(elementId, e.getSource().getException().getMessage()));
         });
 
         Thread thread = new Thread(task);
