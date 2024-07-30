@@ -6,13 +6,18 @@ import java.util.Map;
 
 public class TranslationTask extends Task<String> {
     private final String originalText;
-    private final String source = "ja";
-    private final String target = "en";
+    private final String source;
+    private final String target;
     private static final Map<String, String> cache = new HashMap<>();
     private final ApiClient apiClient;
 
-    public TranslationTask(String originalText, ApiClient apiClient) {
+    public TranslationTask(String originalText,
+                           Language source,
+                           Language target,
+                           ApiClient apiClient) {
         this.originalText = originalText;
+        this.source = source.getCode();
+        this.target = target.getCode();
         this.apiClient = apiClient;
     }
 
