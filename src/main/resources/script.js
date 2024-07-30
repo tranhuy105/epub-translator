@@ -15,8 +15,15 @@ function handleTranslationResultById(elementId, translatedText) {
     }
 }
 
-function handleTranslationError() {
-    showToast("Something went wrong with the translation, please try again later!");
+function handleTranslationError(elementId, message) {
+    const p = document.getElementById(elementId);
+    if (p) {
+        const loadingTranslation = p.querySelector('.translation')
+        if (loadingTranslation) {
+            loadingTranslation.remove();
+        }
+    }
+    showToast(message);
 }
 
 function showToast(message) {
