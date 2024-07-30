@@ -28,8 +28,9 @@ public class ApiClientService {
             while ((inputLine = in.readLine()) != null) {
                 content.append(inputLine);
             }
+        } finally {
+            conn.disconnect();
         }
-        conn.disconnect();
         if (conn.getResponseCode() == 200) {
             return parser.apply(content.toString());
         } else {
