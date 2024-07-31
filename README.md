@@ -24,7 +24,7 @@ You can install and run the EPUB Translator using either the provided JAR file o
 2. Ensure you have Java 17 or higher installed on your machine. You can download it from [here](https://adoptopenjdk.net/).
 4. Run the application by double click the jar file or by using the following command:
     ```sh
-    java -jar epub-translator-1.0-SNAPSHOT.jar
+    java -jar epub-translator-1.0.jar
     ```
 
 ### Manual Installation
