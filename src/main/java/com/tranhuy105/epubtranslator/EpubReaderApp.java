@@ -1,10 +1,13 @@
 package com.tranhuy105.epubtranslator;
 
 import com.tranhuy105.epubtranslator.controllers.EpubViewerController;
+import com.tranhuy105.epubtranslator.controllers.PreferencesController;
 import com.tranhuy105.epubtranslator.services.TranslationTaskManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -36,6 +39,21 @@ public class EpubReaderApp extends Application {
         primaryStage.setScene(scene);
         primaryStage.setFullScreen(true);
         primaryStage.show();
+    }
+
+    public static void openUserPreferenceForm() throws IOException {
+        FXMLLoader loader = new FXMLLoader(EpubReaderApp.class.getResource("preferences-form.fxml"));
+        Parent root = loader.load();
+
+        PreferencesController controller = loader.getController();
+
+        Stage stage = new Stage();
+        stage.setTitle("User Preferences");
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(new Scene(root));
+
+        controller.setDialogStage(stage);
+        stage.show();
     }
 
     public static void main(String[] args) {

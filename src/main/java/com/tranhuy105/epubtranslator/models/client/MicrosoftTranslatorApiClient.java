@@ -35,6 +35,9 @@ public class MicrosoftTranslatorApiClient implements ApiClient {
         try (OutputStream os = conn.getOutputStream()) {
             byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
+        } catch (IOException ex) {
+            conn.disconnect();
+            throw ex;
         }
         return conn;
     }

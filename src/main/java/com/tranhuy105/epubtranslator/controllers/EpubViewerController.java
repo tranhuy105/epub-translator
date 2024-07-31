@@ -2,17 +2,16 @@ package com.tranhuy105.epubtranslator.controllers;
 
 import com.tranhuy105.epubtranslator.EpubReaderApp;
 import com.tranhuy105.epubtranslator.models.Language;
-import com.tranhuy105.epubtranslator.services.ApiClientService;
+import com.tranhuy105.epubtranslator.services.*;
 import com.tranhuy105.epubtranslator.models.ApiClientType;
 import com.tranhuy105.epubtranslator.models.TranslationTask;
-import com.tranhuy105.epubtranslator.services.EpubToHtmlConverter;
-import com.tranhuy105.epubtranslator.services.FileManager;
-import com.tranhuy105.epubtranslator.services.TranslationTaskManager;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
@@ -22,6 +21,7 @@ import nl.siegmann.epublib.domain.MediaType;
 import nl.siegmann.epublib.domain.Resource;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -30,13 +30,39 @@ public class EpubViewerController {
     private WebView webView;
     @FXML
     private TextField pageInput;
+    @FXML
+    private ComboBox<Language> sourceLanguage;
+    @FXML
+    private ComboBox<Language> targetLanguage;
+    @FXML
+    private Slider textSizeSlider;
+    @FXML
+    private Label textSizeLabel;
+    @FXML
+    private Button themeToggleButton;
+    @FXML
+    private ComboBox<ApiClientType> modelType;
     private WebEngine webEngine;
-    private boolean isDarkMode = true;
+    private boolean isDarkMode = !Objects.equals(UserPreferencesManager.getInstance().getUserPreferences().getPreferredMode(), "Light");
     private ChangeListener<Worker.State> loadStateListener;
 
 
     public void initialize() {
         webEngine = webView.getEngine();
+
+        sourceLanguage.setItems(FXCollections.observableArrayList(Language.values()));
+        targetLanguage.setItems(FXCollections.observableArrayList(Language.values()));
+        modelType.setItems(FXCollections.observableArrayList(ApiClientType.values()));
+
+        sourceLanguage.setValue(UserPreferencesManager.getInstance().getUserPreferences().getPreferredSourceLanguage());
+        targetLanguage.setValue(UserPreferencesManager.getInstance().getUserPreferences().getPreferredTargetLanguage());
+        modelType.setValue(ApiClientType.MY_MEMORY);
+
+        textSizeSlider.setValue(UserPreferencesManager.getInstance().getUserPreferences().getPreferredTextSize());
+        textSizeLabel.textProperty().bind(Bindings.format("%.0fpx", textSizeSlider.valueProperty()));
+        textSizeSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            adjustTextSize(newVal.doubleValue());
+        });
 
         // idk why i can't navigate by a tag #id in javafx when i click on it, so i have to resolve to this.
         webEngine.setOnAlert((WebEvent<String> event) -> {
@@ -66,8 +92,27 @@ public class EpubViewerController {
 
             webEngine.loadContent(completeHtml);
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e instanceof NoSuchFileException) {
+                logAndNavigateToHome(e, "File not found!");
+            } else {
+                logAndNavigateToHome(e, "IO Exception occurred while loading the EPUB file.");
+            }
+        } catch (Exception e) {
+            logAndNavigateToHome(e, "An unexpected error occurred while loading the EPUB file.");
         }
+    }
+
+    private void logAndNavigateToHome(Exception e, String userMessage) {
+        e.printStackTrace();
+
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText(userMessage);
+            alert.showAndWait();
+            navigateToHome();
+        });
     }
 
     @FXML
@@ -90,10 +135,28 @@ public class EpubViewerController {
         }
     }
 
+    private void adjustTextSize(double newSize) {
+        String script = """
+        var styleElement = document.getElementById('dynamic-font-size');
+        if (!styleElement) {
+            styleElement = document.createElement('style');
+            styleElement.id = 'dynamic-font-size';
+            document.head.appendChild(styleElement);
+        }
+        styleElement.innerHTML = '#epub-body { font-size: %dpx !important; }';
+    """.formatted((int) newSize);
+        webEngine.executeScript(script);
+    }
+
     @FXML
     protected void toggleTheme() throws IOException {
         isDarkMode = !isDarkMode;
         injectNewCss();
+        updateThemeToggleButtonText();
+    }
+
+    private void updateThemeToggleButtonText() {
+        themeToggleButton.setText(isDarkMode ? "Day Mode" : "Night Mode");
     }
 
     private void navigateToPage(int pageNumber) {
@@ -130,7 +193,7 @@ public class EpubViewerController {
                 "</style>" +
                 "<style id=\"epub-style\">" +
                 epubCss +
-                "</style></head><body>" +
+                "</style></head><body id=\"epub-body\">" +
                 "<div class=\"container\">" +
                 htmlContent +
                 "</div>" +
@@ -166,12 +229,18 @@ public class EpubViewerController {
 
     public void getTranslationAsync(String originalText, String elementId) {
         System.out.println("Received Translate Request: " + originalText + " ID: " + elementId);
-        TranslationTask task = new TranslationTask(
-                originalText,
-                Language.JAPANESE,
-                Language.ENGLISH,
-                ApiClientService.getClient(ApiClientType.MY_MEMORY)
-        );
+        TranslationTask task;
+        try {
+            task = new TranslationTask(
+                    originalText,
+                    sourceLanguage.getValue(),
+                    targetLanguage.getValue(),
+                    ApiClientService.getClient(ApiClientType.MICROSOFT_TRANSLATOR)
+            );
+        } catch (Exception e) {
+            Platform.runLater(() -> sendTranslationErrorToView(elementId, e.getMessage()));
+            return;
+        }
 
         task.setOnSucceeded(e -> {
             String translatedText = task.getValue();
@@ -192,6 +261,7 @@ public class EpubViewerController {
             if (loadStateListener != null) {
                 webEngine.getLoadWorker().stateProperty().removeListener(loadStateListener);
             }
+            loadStateListener = null;
             webEngine.setOnAlert(null);
             webEngine = null; // Clear the reference
             webView = null; // Clear the reference

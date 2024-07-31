@@ -20,4 +20,10 @@
             onAction="#loadNewEpub"
             style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"
             VBox.vgrow="NEVER"/>
+
+    <!-- Save Preferences Button -->
+    <Button text="Preferences"
+            onAction="#saveUserPreferences"
+            style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"
+            VBox.vgrow="NEVER"/>
 </VBox>
