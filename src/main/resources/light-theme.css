@@ -5,23 +5,34 @@
     padding: 0;
     font-size: 32px !important;
     line-height: 1.8 !important;
+    direction: ltr !important;
+    writing-mode: horizontal-tb !important;
+}
+
+body {
+    direction: ltr !important;
 }
 
 .container {
-    width: 90vw;
-    margin-left: 5vw;
-    margin-right: 5vw;
+    width: 90vw !important;
+    margin: 0 5vw !important;
+    padding: 0 !important;
+    direction: ltr !important;
+    overflow-x: hidden !important;
+    writing-mode: horizontal-tb !important;
 }
 
 body p {
     text-align: left;
 }
 
-img {
+body p img {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     max-width: 100% !important;
     object-fit: cover !important;
-    display: block; !important
-    margin: 0 0; !important
+    padding: 0 0; !important;
 }
 
 #page-info {
