@@ -57,14 +57,14 @@ EPUB Translator supports three translation APIs:
 
 1. **MyMemory API** - Free to use.
 2. **Microsoft Translator API** - Requires an API key, which you can obtain for free from [RapidAPI](https://rapidapi.com/).
-3. **DeepL Translator API** - Requires an API key, which you can obtain for free from [RapidAPI](https://rapidapi.com/).
+3. **Deep Translate API** - Requires an API key, which you can obtain for free from [RapidAPI](https://rapidapi.com/).
 
 ### Obtaining API Keys
 
-To use Microsoft Translator or DeepL Translator, follow these steps to obtain your API key:
+To use Microsoft Translator or Deep Translate, follow these steps to obtain your API key:
 
 1. Go to [RapidAPI](https://rapidapi.com/) and create an account if you don't already have one.
-2. Search for "Microsoft Translator" or "DeepL Translator".
+2. Search for "Microsoft Translator" or "Deep Translate".
 3. Subscribe to the API free tier and get your API key.
 
 ### Register API Keys
@@ -74,7 +74,7 @@ Once you have obtained your API keys, you need to register them in the user pref
 1. Open the EPUB Translator application.
 2. Go to the home page.
 3. Click on the "Preferences" button.
-4. Enter your API key for Microsoft Translator or DeepL Translator in the respective fields.
+4. Enter your API key for Microsoft Translator or Deep Translate in the respective fields.
 5. Save your preferences.
 
     ![User Preference](./images/api-key-preferences.png)
