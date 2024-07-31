@@ -55,9 +55,4 @@ public class EpubReaderApp extends Application {
         controller.setDialogStage(stage);
         stage.show();
     }
-
-    public static void main(String[] args) {
-        launch();
-        TranslationTaskManager.getExecutorService().shutdown();
-    }
 }
