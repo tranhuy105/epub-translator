@@ -4,13 +4,31 @@
 <?import javafx.scene.web.WebView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.Region?>
+
+<?import javafx.scene.layout.VBox?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.tranhuy105.epubtranslator.controllers.EpubViewerController">
     <top>
-        <HBox spacing="10" style="-fx-padding: 5; -fx-background-color: #333;" BorderPane.alignment="CENTER">
-            <Button text="Back to Home" onAction="#navigateToHome" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
-            <Button text="Toggle Theme" onAction="#toggleTheme" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
-            <TextField fx:id="pageInput" promptText="Enter page number" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
-            <Button text="Go to Page" onAction="#goToPage" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+        <HBox spacing="10" style="-fx-padding: 5; -fx-background-color: #333;" BorderPane.alignment="CENTER" alignment="CENTER">
+            <Button text="Home" onAction="#navigateToHome" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="themeToggleButton" text="Theme" onAction="#toggleTheme" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+                <ComboBox fx:id="modelType" promptText="model" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20; -fx-pref-width: 150"/>
+                <TextField fx:id="pageInput" promptText="Enter page" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20; -fx-pref-width: 150"/>
+                <Button text="Go to Page" onAction="#goToPage" style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+                <ComboBox fx:id="sourceLanguage" promptText="Source Language" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 5 10;"/>
+                <ComboBox fx:id="targetLanguage" promptText="Target Language" style="-fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 5 10;"/>
+                <VBox spacing="3" alignment="CENTER_LEFT">
+                    <Label text="Text Size:" style="-fx-text-fill: white;"/>
+                    <Label fx:id="textSizeLabel" text="32px" style="-fx-text-fill: white;"/>
+                </VBox>
+                <Slider fx:id="textSizeSlider" min="16" max="48" prefWidth="100"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
         </HBox>
     </top>
     <center>

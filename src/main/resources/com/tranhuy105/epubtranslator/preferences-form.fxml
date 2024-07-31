@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.HBox?>
+<VBox alignment="TOP_CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml" fx:controller="com.tranhuy105.epubtranslator.controllers.PreferencesController" style="-fx-padding: 20;">
+    <Label text="User Preferences"
+           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 10 0;"/>
+
+    <VBox spacing="10">
+        <HBox spacing="10">
+            <Label text="Microsoft Text Translator API Key:"/>
+            <TextField fx:id="microsoftTranslatorApiKeyField" promptText="Enter your API key"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Deep Translator API Key:"/>
+            <TextField fx:id="deepTranslatorApiKeyField" promptText="Enter your API key"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Preferred Text Size:"/>
+            <TextField fx:id="textSizeField" promptText="Enter preferred text size"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Mode:"/>
+            <ComboBox fx:id="modeComboBox" promptText="Select mode"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Source Language:"/>
+            <ComboBox fx:id="sourceLanguageComboBox" promptText="Select source language"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Target Language:"/>
+            <ComboBox fx:id="targetLanguageComboBox" promptText="Select target language"/>
+        </HBox>
+    </VBox>
+
+    <Button text="Save Preferences"
+            onAction="#saveUserPreferences"
+            style="-fx-text-fill: white; -fx-background-color: #555; -fx-background-radius: 5; -fx-border-radius: 5; -fx-padding: 10 20;"/>
+</VBox>

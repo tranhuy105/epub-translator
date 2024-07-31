@@ -5,6 +5,7 @@ import com.tranhuy105.epubtranslator.models.ApiClientType;
 import com.tranhuy105.epubtranslator.models.client.DeepTranslateApiClient;
 import com.tranhuy105.epubtranslator.models.client.MicrosoftTranslatorApiClient;
 import com.tranhuy105.epubtranslator.models.client.MyMemoryApiClient;
+import com.tranhuy105.epubtranslator.services.UserPreferencesManager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,8 +17,8 @@ public class ApiClientService {
     public static ApiClient getClient(ApiClientType type) {
         return switch (type) {
             case MY_MEMORY -> new MyMemoryApiClient();
-            case DEEP_TRANSLATE -> new DeepTranslateApiClient("");
-            case MICROSOFT_TRANSLATOR -> new MicrosoftTranslatorApiClient("");
+            case DEEP_TRANSLATE -> getDeepTranslatorApiClient();
+            case MICROSOFT_TRANSLATOR -> getMicrosoftTranslatorClient();
         };
     }
 
@@ -35,6 +36,24 @@ public class ApiClientService {
             return parser.apply(content.toString());
         } else {
             throw new RuntimeException("Api call to translation service response with an error status. Please try again later");
+        }
+    }
+
+    private static DeepTranslateApiClient getDeepTranslatorApiClient() {
+        String key = UserPreferencesManager.getInstance().getUserPreferences().getDeepTranslatorApiKey();
+        apiKeyCheck(key);
+        return new DeepTranslateApiClient(key);
+    }
+
+    private static MicrosoftTranslatorApiClient getMicrosoftTranslatorClient() {
+        String key = UserPreferencesManager.getInstance().getUserPreferences().getMicrosoftTextTranslatorApiKey();
+        apiKeyCheck(key);
+        return new MicrosoftTranslatorApiClient(key);
+    }
+
+    private static void apiKeyCheck(String apiKey) {
+        if (apiKey == null || apiKey.isEmpty() || apiKey.isBlank()) {
+            throw new RuntimeException("Please set your api key at user preferences to use this model");
         }
     }
 }

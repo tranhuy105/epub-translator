@@ -4,17 +4,14 @@ import com.tranhuy105.epubtranslator.EpubReaderApp;
 import com.tranhuy105.epubtranslator.models.RecentFile;
 import com.tranhuy105.epubtranslator.services.RecentFilesManager;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Screen;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +45,15 @@ public class HomeController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @FXML
+    protected void saveUserPreferences() {
+        try {
+            EpubReaderApp.openUserPreferenceForm();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
