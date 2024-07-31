@@ -37,6 +37,11 @@ public class RecentFilesManager {
         saveRecentFiles();
     }
 
+    public void removeRecentFile(String filepath) {
+        recentFiles.removeIf(f -> f.getFilePath().equals(filepath));
+        saveRecentFiles();
+    }
+
     private List<RecentFile> loadRecentFiles() {
         try {
             Path path = getRecentFilePath();

@@ -92,6 +92,7 @@ public class EpubViewerController {
 
             webEngine.loadContent(completeHtml);
         } catch (IOException e) {
+            RecentFilesManager.getInstance().removeRecentFile(filePath);
             if (e instanceof NoSuchFileException) {
                 logAndNavigateToHome(e, "File not found!");
             } else {
