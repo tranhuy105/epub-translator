@@ -109,7 +109,7 @@ The application supports different translation APIs. But if you want to implemen
     - Implement the `ApiClient` interface.
 
     ```java
-    package com.tranhuy105.epubtranslator.services;
+    package com.tranhuy105.epubtranslator.models.client;
 
     import java.net.HttpURLConnection;
     import java.net.MalformedURLException;
@@ -144,7 +144,7 @@ The application supports different translation APIs. But if you want to implemen
     public enum ApiClientType {
         MY_MEMORY,
         MICROSOFT_TRANSLATOR,
-        DEEPL_TRANSLATOR,
+        DEEP_TRANSLATE,
         MY_CUSTOM_API; // Add your custom API client here
     }
     ```
