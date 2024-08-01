@@ -236,7 +236,7 @@ public class EpubViewerController {
                     originalText,
                     sourceLanguage.getValue(),
                     targetLanguage.getValue(),
-                    ApiClientService.getClient(ApiClientType.MICROSOFT_TRANSLATOR)
+                    ApiClientService.getClient(modelType.getValue())
             );
         } catch (Exception e) {
             Platform.runLater(() -> sendTranslationErrorToView(elementId, e.getMessage()));
